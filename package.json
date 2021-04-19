@@ -1,0 +1,11 @@
+{
+  "name": "hrcu-sql-client",
+  "version": "1.0.0",
+  "description": "SQL client for HRCU",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "James Ahfat",
+  "license": "ISC"
+}
