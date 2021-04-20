@@ -35,17 +35,20 @@ function connectDB(array, ext) {
                 .request()
                 .input('input_1', sql.Char, array[3])
                 .input('input_2', sql.Char, array[4])
-                .query(
-                    `SELECT RTRIM(CUENTA) AS CUENTA, RTRIM(CLIENTEID) AS CLIENTEID, RTRIM(DESCRIPCION) AS DESCRIPCION,
-          RTRIM(NOMBRE) AS NOMBRE, RTRIM(APELLIDO) AS APPELIDO, VALOR1, VALOR2, VALOR3, VALOR4, VALOR5, SOCIAL
-          FROM HRCU.dbo.SALDOS WHERE CUENTA=@input_1 AND CLIENTEID=@input_2`
-                )
+                .query(`SELECT RTRIM(CUENTA) AS CUENTA, RTRIM(CLIENTEID) AS CLIENTEID, RTRIM(DESCRIPCION) AS DESCRIPCION,
+                RTRIM(NOMBRE) AS NOMBRE, RTRIM(APELLIDO) AS APPELIDO, VALOR1, VALOR2, VALOR3, VALOR4, VALOR5, SOCIAL
+                FROM ${config.table}
+                WHERE CUENTA=@input_1 AND CLIENTEID=@input_2`)
         })
         .then((result) => {
-            writeToFile(JSON.stringify(result.recordsets[0]), ext)
+            if (result.recordsets[0].length == 0) {
+                writeToFile('Data Source Invalid', ext)
+            } else {
+                writeToFile(JSON.stringify(result.recordsets[0]), ext)
+            }
         })
         .catch((err) => {
-            //do nothing with error for now
+            log(err)
         })
 }
 
@@ -60,6 +63,10 @@ function buildConfig(array) {
             min: 0,
             idleTimeoutMillis: 750,
         },
+        table:
+            array[0] == 'GetAccount'
+                ? process.env.DB_TABLE1
+                : process.env.DB_TABLE2,
     }
 
     return config
