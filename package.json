@@ -6,7 +6,8 @@
     "scripts": {
         "start": "node index.js",
         "test": "test",
-        "install": "node install.js"
+        "install": "node install.js",
+        "uninstall": "node uninstall.js"
     },
     "author": "James Ahfat",
     "license": "ISC",
