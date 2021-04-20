@@ -116,3 +116,6 @@ dist
 .pnp.*
 
 XMLexamples
+
+# ignore generated code by node-windows
+daemon
