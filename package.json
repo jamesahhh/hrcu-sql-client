@@ -4,8 +4,14 @@
   "description": "SQL client for HRCU",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "test"
   },
   "author": "James Ahfat",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^3.5.1",
+    "dotenv": "^8.2.0",
+    "mssql": "^6.3.1"
+  }
 }
