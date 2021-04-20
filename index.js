@@ -71,14 +71,12 @@ function writeToFile(content, ext) {
             console.error(err)
             return
         }
-        log(`File ${ext} created in base directory`)
     })
 }
 
 async function checkFor(path) {
     try {
         await access(path, constants.R_OK | constants.W_OK)
-        log('can access')
     } catch (err) {
         createDirectory(path)
     }
