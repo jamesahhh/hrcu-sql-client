@@ -81,7 +81,7 @@ function connectDB(array, ext) {
 }
 
 function buildConfig(array) {
-    var config = {
+    return {
         user: array[1],
         password: array[2],
         server: process.env.DB_HOST,
@@ -96,15 +96,12 @@ function buildConfig(array) {
                 ? process.env.DB_TABLE1
                 : process.env.DB_TABLE2,
     }
-
-    return config
 }
 
 function writeToFile(content, ext) {
     writeFile(`${process.env.OUTPUT_DIRECTORY}/${ext}`, content, (err) => {
         if (err) {
             console.error(err)
-            return
         }
     })
 }
