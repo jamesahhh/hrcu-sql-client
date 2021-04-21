@@ -4,6 +4,7 @@ const { unlink, access } = require('fs/promises')
 const { watch } = require('chokidar')
 const { constants, readFileSync, writeFile, mkdir } = require('fs')
 const sql = require('mssql')
+const { stringify } = require('querystring')
 
 const log = console.log.bind(console)
 
@@ -29,27 +30,54 @@ function fileOps(path) {
 
 function connectDB(array, ext) {
     var config = buildConfig(array)
-    sql.connect(config)
-        .then((pool) => {
-            return pool
-                .request()
-                .input('input_1', sql.Char, array[3])
-                .input('input_2', sql.Char, array[4])
-                .query(`SELECT RTRIM(CUENTA) AS CUENTA, RTRIM(CLIENTEID) AS CLIENTEID, RTRIM(DESCRIPCION) AS DESCRIPCION,
+    if (array[0] == 'GetAccount') {
+        sql.connect(config)
+            .then((pool) => {
+                return pool
+                    .request()
+                    .input('input_1', sql.Char, array[3])
+                    .input('input_2', sql.Char, array[4])
+                    .query(`SELECT RTRIM(CUENTA) AS CUENTA, RTRIM(CLIENTEID) AS CLIENTEID, RTRIM(DESCRIPCION) AS DESCRIPCION,
                 RTRIM(NOMBRE) AS NOMBRE, RTRIM(APELLIDO) AS APPELIDO, VALOR1, VALOR2, VALOR3, VALOR4, VALOR5, SOCIAL
                 FROM ${config.table}
-                WHERE CUENTA=@input_1 AND CLIENTEID=@input_2`)
-        })
-        .then((result) => {
-            if (result.recordsets[0].length == 0) {
-                writeToFile('Data Source Invalid', ext)
-            } else {
-                writeToFile(JSON.stringify(result.recordsets[0]), ext)
-            }
-        })
-        .catch((err) => {
-            log(err)
-        })
+                WHERE (CUENTA=@input_1 AND CLIENTEID=@input_2) OR (CUENTA=@input_1)`)
+            })
+            .then((result) => {
+                if (result.recordsets[0].length == 0) {
+                    writeToFile('Data Source Invalid', ext)
+                } else {
+                    writeToFile(JSON.stringify(result.recordsets[0]), ext)
+                }
+            })
+            .catch((err) => {
+                log(err)
+            })
+    } else {
+        sql.connect(config)
+            .then((pool) => {
+                return pool
+                    .request()
+                    .input('input_1', sql.Char, array[3])
+                    .input('input_2', sql.Char, array[4])
+                    .input('input_3', sql.Char, array[5])
+                    .input('input_4', sql.Money, array[6])
+                    .input('input_5', sql.Char(1), array[7])
+                    .input('input_6', sql.Char(1), array[8])
+                    .query(`INSERT INTO [dbo].[PAGOS] (FECHA,HORA,[RECIBO],[CUENTA],[CLIENTEID],[VALORP],[TIPO],[reversed])
+                    VALUES (CAST(GETDATE() AS date),cast(getdate() as time),@input_3,@input_1,@input_2,@input_4,@input_5,@input_6)`)
+            })
+            .then((result) => {
+                writeToFile(
+                    `Operation returned with ${JSON.stringify(
+                        result.rowsAffected
+                    )} rows affected.`,
+                    ext
+                )
+            })
+            .catch((err) => {
+                log(err)
+            })
+    }
 }
 
 function buildConfig(array) {
