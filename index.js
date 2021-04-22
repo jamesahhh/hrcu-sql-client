@@ -88,11 +88,7 @@ function connectDB(array, ext) {
                     .input('input_4', sql.Money, array[6])
                     .input('input_5', sql.Char(1), array[7])
                     .input('input_6', sql.Char(1), array[8])
-<<<<<<< HEAD
                     .query(`UPDATE ${config.table}
-=======
-                    .query(`UPDATE [dbo].[PAGOS]
->>>>>>> f24eb88d0c2b1d70c5d5940a970d7e296cf7083e
                     SET [TIPO]=@input_5,[reversed]=@input_6
                     WHERE [RECIBO] = @input_3 AND [CUENTA] = @input_1 AND [CLIENTEID] = @input_2 AND [VALORP] = @input_4 AND [TIPO]='P' AND [reversed]='N'`)
             })
