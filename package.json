@@ -14,6 +14,6 @@
     "dependencies": {
         "chokidar": "^3.5.1",
         "dotenv": "^8.2.0",
-        "mssql": "^7.0.0"
+        "mssql": "^10.0.0"
     }
 }
